@@ -1,0 +1,30 @@
+{
+  "name": "iluseki-backend",
+  "version": "1.0.0",
+  "description": "Creacion backend utilizando Node y mongoDB",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "dev delayed": "nodemon --delay 500ms index.js"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "mongodb"
+  ],
+  "author": "Sergio Requena Torres",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "express-validator": "^6.15.0",
+    "mongoose": "^8.2.4",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "jsonwebtoken": "^9.0.0",
+    "nodemon": "^2.0.21",
+    "uuid": "^9.0.0"
+  }
+}
