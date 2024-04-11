@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
+const fileUpload = require('express-fileupload');
 require('dotenv').config();
 const auth = require('./rutas/auth');
+const ilustracion = require('./rutas/Ilustraciones');
 const { conexion } = require('./database/config');
 
 //conexion a la BD
@@ -16,8 +18,15 @@ app.use(cors());
 //permitir escritura y lectura en json
 app.use(express.json());
 
+//permitir subida imágenes
+app.use(fileUpload({
+    useTempFiles : true,
+    tempFileDir : './uploads'
+}));
+
 //rutas
 app.use('/api/user', auth);
+app.use('/api/ilustration', ilustracion);
 
 const PORT = process.env.PORT || 5000
 
