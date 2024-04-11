@@ -39,6 +39,7 @@ const subirIlustracion = async (req, res = response) => {
             result = await uploadImage(req.files.imagen.tempFilePath);            
         }        
 
+        //Añado el secure_url de la imagen al campo imagen de la base de datos
         ilustracion.imagen = result.secure_url;
 
         //Guardamos el ilustracion en la base de datos utilizando el método save() de Mongoose
