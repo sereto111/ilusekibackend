@@ -1,6 +1,8 @@
-const { uploadImage } = require('../middleware/cloudinary')
-const { response } = require('express')
-const { Ilustracion } = require('../modelos/Ilustracion')
+const { uploadImage, deleteImage } = require('../middleware/cloudinary');
+const { response } = require('express');
+const { Ilustracion } = require('../modelos/Ilustracion');
+const fs = require('fs-extra');
+
 
 // Función de validación para verificar si se proporciona una imagen
 const validarImagen = (value, { req }) => {
@@ -37,10 +39,13 @@ const subirIlustracion = async (req, res = response) => {
         if (req.files?.imagen) {
             //Subir imagen
             result = await uploadImage(req.files.imagen.tempFilePath);            
+
+            await fs.unlink(req.files.imagen.tempFilePath);
         }        
 
         //Añado el secure_url de la imagen al campo imagen de la base de datos
-        ilustracion.imagen = result.secure_url;
+        ilustracion.imagen.public_id = result.public_id;
+        ilustracion.imagen.secure_url = result.secure_url;
 
         //Guardamos el ilustracion en la base de datos utilizando el método save() de Mongoose
         await ilustracion.save();
@@ -51,7 +56,10 @@ const subirIlustracion = async (req, res = response) => {
             mensaje: "subir",
             nombre: ilustracion.nombre,
             descripcion: ilustracion.descripcion,                        
-            imagen: result.secure_url,            
+            imagen: {
+                public_id: result.public_id,
+                secure_url: result.secure_url
+            },            
             usuario: ilustracion.usuario
         })
     } catch (error) {
@@ -107,19 +115,19 @@ const buscarIlustracion = async (req, res = response) => {
     const { nombre } = req.body;
   
     try {
-      // Buscamos todos los ilustracions en la base de datos que tengan un nombre que coincida parcialmente con el nombre especificado
-      const ilustracions = await Ilustracion.find({ nombre: { $regex: nombre, $options: 'i' } });
+      // Buscamos todos los ilustraciones en la base de datos que tengan un nombre que coincida parcialmente con el nombre especificado
+      const ilustraciones = await Ilustracion.find({ nombre: { $regex: nombre, $options: 'i' } });
   
       // Si no se encuentra ningún ilustracion con el nombre especificado, devolvemos una respuesta de error
-      if (ilustracions.length === 0) {
+      if (ilustraciones.length === 0) {
         return res.status(400).json({
           ok: false,
-          mensaje: 'No se encontraron ilustracions con ese nombre en la BD'
+          mensaje: 'No se encontraron ilustraciones con ese nombre en la BD'
         });
       }
   
-      // Si se encuentran ilustracions con el nombre especificado, devolvemos una respuesta con los ilustracions encontrados
-      const resultados = ilustracions.map((ilustracion) => ({
+      // Si se encuentran ilustraciones con el nombre especificado, devolvemos una respuesta con los ilustraciones encontrados
+      const resultados = ilustraciones.map((ilustracion) => ({
         nombre: ilustracion.nombre,
         descripcion: ilustracion.descripcion,        
         imagen: ilustracion.imagen,
@@ -141,14 +149,14 @@ const buscarIlustracion = async (req, res = response) => {
 //Listar todos las ilustraciones
 const listarIlustracions = async (req, res = response) => {
     try {
-        //Realizamos la búsqueda de todos los ilustracions en la base de datos utilizando el método find() de Mongoose
-        const ilustracions = await Ilustracion.find();
+        //Realizamos la búsqueda de todos los ilustraciones en la base de datos utilizando el método find() de Mongoose
+        const ilustraciones = await Ilustracion.find();
 
-        //Si la búsqueda se realiza correctamente, devolvemos una respuesta con un objeto JSON que contiene el arreglo de ilustracions
+        //Si la búsqueda se realiza correctamente, devolvemos una respuesta con un objeto JSON que contiene el arreglo de ilustraciones
         return res.json({
             ok: true,
-            mensaje: "listado de ilustracions:",
-            ilustracions
+            mensaje: "listado de ilustraciones:",
+            ilustraciones
         });
     } catch (error) {
         //Si se produce un error durante la búsqueda, lo capturamos y devolvemos una respuesta de error
@@ -196,6 +204,9 @@ const eliminarIlustracion = async (req, res) => {
     const { nombre } = req.params;
 
     try {
+        //Busco la ilustración por nombre
+        const ilustracion = await Ilustracion.findOne({ nombre });
+
         //Utilizamos el método deleteOne() de Mongoose para eliminar el ilustracion con el título especificado
         const result = await Ilustracion.deleteOne({ nombre: nombre });
 
@@ -203,6 +214,9 @@ const eliminarIlustracion = async (req, res) => {
         if (result.deletedCount === 0) {
             return res.status(404).json({ mensaje: 'registro no encontrado' });
         }
+
+        //Eliminar imagen de cloudinary
+        await deleteImage(ilustracion.imagen.public_id);
 
         //Si se eliminó el registro correctamente, devolvemos un mensaje de éxito
         return res.json({ mensaje: 'registro eliminado' });

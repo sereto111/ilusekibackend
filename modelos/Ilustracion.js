@@ -11,8 +11,14 @@ const IlustracionSchema = Schema({
         require: true
     },
     imagen : {        
-        type : String,
-        require: true
+        public_id: {
+            type: String,
+            required: true
+        },
+        secure_url: {
+            type: String,
+            required: true
+        }
     },
     usuario : {
         type : String,

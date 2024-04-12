@@ -33,7 +33,7 @@ router.put("/actualizarIlustracion/:nombre",
 actualizarIlustracion);
 
 //Eliminar
-router.delete("/eliminarIlustracion/:nombre", 
+router.delete("/eliminarIlustracion/:nombre",
     [
         validarCampos
     ],
