@@ -18,7 +18,7 @@ router.post("/subirIlustracion",
     ], 
 subirIlustracion);
 
-//TODO:
+//TODO: Probar actualizar
 router.get("/listarIlustraciones", 
     [validarCampos],
 listarIlustraciones);
