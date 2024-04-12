@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { validarImagen, subirIlustracion, listarIlustracions, actualizarIlustracion, eliminarIlustracion } = require('../controladores/Ilustracion');
+const { validarImagen, subirIlustracion, listarIlustraciones, actualizarIlustracion, eliminarIlustracion } = require('../controladores/Ilustracion');
 const { check } = require('express-validator')
 const { validarCampos } = require('../middleware/validator');
 const router = Router();
@@ -19,9 +19,9 @@ router.post("/subirIlustracion",
 subirIlustracion);
 
 //TODO:
-router.get("/listarIlustracions", 
+router.get("/listarIlustraciones", 
     [validarCampos],
-listarIlustracions);
+listarIlustraciones);
 
 //Actualizar por titulo
 router.put("/actualizarIlustracion/:nombre", 

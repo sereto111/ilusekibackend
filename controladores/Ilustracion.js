@@ -147,7 +147,7 @@ const buscarIlustracion = async (req, res = response) => {
   
 
 //Listar todos las ilustraciones
-const listarIlustracions = async (req, res = response) => {
+const listarIlustraciones = async (req, res = response) => {
     try {
         //Realizamos la búsqueda de todos los ilustraciones en la base de datos utilizando el método find() de Mongoose
         const ilustraciones = await Ilustracion.find();
@@ -229,5 +229,5 @@ const eliminarIlustracion = async (req, res) => {
 
 //Exportamos las funciones para que puedan ser utilizadas desde otros módulos
 module.exports = {
-    validarImagen, subirIlustracion, buscarIlustracionAEditar, buscarIlustracion, listarIlustracions, actualizarIlustracion, eliminarIlustracion
+    validarImagen, subirIlustracion, buscarIlustracionAEditar, buscarIlustracion, listarIlustraciones, actualizarIlustracion, eliminarIlustracion
 }
