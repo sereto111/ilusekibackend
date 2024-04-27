@@ -4,6 +4,8 @@ const fileUpload = require('express-fileupload');
 require('dotenv').config();
 const auth = require('./rutas/auth');
 const ilustracion = require('./rutas/Ilustraciones');
+const EmailSender = require('./rutas/EmailSender');
+const ResetPass = require('./rutas/ResetPass');
 const { conexion } = require('./database/config');
 
 //conexion a la BD
@@ -27,6 +29,8 @@ app.use(fileUpload({
 //rutas
 app.use('/api/user', auth);
 app.use('/api/ilustration', ilustracion);
+app.use('/api/correo', EmailSender);
+app.use('/api/pass', ResetPass);
 
 const PORT = process.env.PORT || 5000
 

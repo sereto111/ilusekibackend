@@ -27,6 +27,7 @@
     "fs-extra": "^11.2.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^8.2.4",
+    "nodemailer": "^6.9.13",
     "nodemon": "^2.0.21",
     "uuid": "^9.0.0"
   }
