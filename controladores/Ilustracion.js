@@ -2,6 +2,7 @@ const { uploadImage, deleteImage } = require('../middleware/cloudinary');
 const { response } = require('express');
 const { Ilustracion } = require('../modelos/Ilustracion');
 const fs = require('fs-extra');
+const { v4: uuidv4 } = require('uuid');
 
 
 // Función de validación para verificar si se proporciona una imagen
@@ -14,22 +15,22 @@ const validarImagen = (value, { req }) => {
 
 //Añadir una ilustracion
 const subirIlustracion = async (req, res = response) => {
-    //Extraemos los datos de la película del cuerpo de la petición
+    //Extraemos los datos de la ilustracion del cuerpo de la petición
     const { nombre } = req.body
 
     try {
         //TODO buscar y quitar console.log
-        //console.log(req.files);  
-        //Buscamos el ilustracion en la base de datos utilizando el nombre
-        let ilustracion = await Ilustracion.findOne({ nombre })
+        // Verificar si ya existe una ilustración con el mismo nombre
+        let ilustracion = await Ilustracion.findOne({ nombre });
 
-        //Si el ilustracion ya existe en la base de datos, devolvemos una respuesta de error
-        if (ilustracion) {
-            return res.status(400).json({
-                ok: false,
-                mensaje: 'la ilustracion ya existe en la BD'
-            })
+        // Si la ilustración ya existe, generar un nuevo nombre único
+        while (ilustracion) {
+            nombre = uuidv4(); // Generar un nuevo UUID como nombre único
+            ilustracion = await Ilustracion.findOne({ nombre });
         }
+
+        // Agregar el nuevo nombre único al cuerpo de la solicitud
+        req.body.nombre = nombre;
 
         //Si el ilustracion no existe, creamos un nuevo objeto Ilustracion con los datos recibidos en el cuerpo de la petición
         ilustracion = new Ilustracion(req.body);        
