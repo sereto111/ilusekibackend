@@ -1,6 +1,6 @@
 const { uploadImage, deleteImage } = require('../middleware/cloudinary');
 const { response } = require('express');
-const { Ilustracion } = require('../modelos/Ilustracion');
+const { Ilustracion, Guardados } = require('../modelos/Ilustracion');
 const fs = require('fs-extra');
 const { v4: uuidv4 } = require('uuid');
 
@@ -228,7 +228,106 @@ const eliminarIlustracion = async (req, res) => {
     }
 }
 
+//Añadir a guardados
+const agregarGuardados = async (req, res) => {
+    const { nombre } = req.body;
+    const { propietario } = req.body;
+
+    try {
+
+        let ilustracionExistente = await Guardados.findOne({ nombre, propietario });
+
+        if (ilustracionExistente) {
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'La ilustración ya está guardada',
+            });
+        }
+
+        let ilustracion = await Ilustracion.findOne({ nombre })
+
+        if (!ilustracion) {
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'la ilustración no existe en la BD'
+            })
+        }
+
+        const entradaGuardados = new Guardados({
+            nombre: ilustracion.nombre,
+            descripcion: ilustracion.descripcion,
+            imagen: ilustracion.imagen,           
+            usuario: ilustracion.usuario,
+            propietario: propietario,
+        });
+
+        await entradaGuardados.save();
+
+        return res.json({
+            ok: true,
+            mensaje: "agregar",
+            nombre: ilustracion.nombre,
+            descripcion: ilustracion.descripcion,
+            imagen: ilustracion.imagen,            
+            usuario: ilustracion.usuario
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            ok: false,
+            mensaje: 'error en el servidor',
+            error: error.message
+        })
+    }
+}
+
+//Listar guardados
+const listarGuardados = async (req, res = response) => {
+    try {
+        //Realizamos la búsqueda de todos los videojuegos en la base de datos utilizando el método find() de Mongoose
+        const guardados = await Guardados.find();
+
+        //Si la búsqueda se realiza correctamente, devolvemos una respuesta con un objeto JSON que contiene el arreglo de ilustraciones
+        return res.json({
+            ok: true,
+            mensaje: "listado de ilustraciones guardadas:",
+            guardados
+        });
+    } catch (error) {
+        //Si se produce un error durante la búsqueda, lo capturamos y devolvemos una respuesta de error
+        console.error(error);
+        return res.status(500).json({
+            ok: false,
+            mensaje: "error en el servidor"
+        });
+    }
+}
+
+//Eliminar guardados
+const eliminarGuardados = async (req, res) => {
+    //Obtenemos el nombre del videojuego a eliminar de los parámetros de la solicitud
+    const { nombre } = req.params;
+    const { propietario } = req.params;
+
+    try {
+        //Utilizamos el método deleteOne() de Mongoose para eliminar la ilustración con el nombre especificado
+        const result = await Guardados.deleteOne({ nombre: nombre, propietario:propietario });
+
+        //Si el resultado indica que no se eliminó ningún registro, devolvemos un error 404
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ mensaje: 'registro no encontrado' });
+        }
+
+        //Si se eliminó el registro correctamente, devolvemos un mensaje de éxito
+        return res.json({ mensaje: 'registro eliminado' });
+    } catch (error) {
+        //Si se produce un error durante la eliminación, lo capturamos y devolvemos una respuesta de error
+        console.error(error);
+        return res.status(500).json({ mensaje: 'error en el servidor' });
+    }
+}
+
 //Exportamos las funciones para que puedan ser utilizadas desde otros módulos
 module.exports = {
-    validarImagen, subirIlustracion, buscarIlustracionAEditar, buscarIlustracion, listarIlustraciones, actualizarIlustracion, eliminarIlustracion
+    validarImagen, subirIlustracion, buscarIlustracionAEditar, buscarIlustracion, listarIlustraciones, actualizarIlustracion, eliminarIlustracion, agregarGuardados, listarGuardados, eliminarGuardados
 }

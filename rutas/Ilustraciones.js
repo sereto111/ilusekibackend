@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { validarImagen, subirIlustracion, listarIlustraciones, actualizarIlustracion, eliminarIlustracion } = require('../controladores/Ilustracion');
+const { validarImagen, subirIlustracion, listarIlustraciones, actualizarIlustracion, eliminarIlustracion, agregarGuardados, listarGuardados, eliminarGuardados } = require('../controladores/Ilustracion');
 const { check } = require('express-validator')
 const { validarCampos } = require('../middleware/validator');
 const router = Router();
@@ -23,7 +23,7 @@ router.get("/listarIlustraciones",
     [validarCampos],
 listarIlustraciones);
 
-//Actualizar por titulo
+//Actualizar por nombre
 router.put("/actualizarIlustracion/:nombre", 
     [        
         check('descripcion', 'la descripcion no puede estar vacía').notEmpty(),
@@ -38,5 +38,21 @@ router.delete("/eliminarIlustracion/:nombre",
         validarCampos
     ],
 eliminarIlustracion);
+
+router.post("/guardados/agregar",
+    [
+        validarCampos
+    ],
+agregarGuardados);
+
+router.get("/guardados/listar", 
+    [validarCampos],
+listarGuardados);
+
+router.delete("/guardados/eliminar/:nombre/:propietario", 
+    [
+        validarCampos
+    ],
+eliminarGuardados);
 
 module.exports = router;
