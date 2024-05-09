@@ -32,7 +32,7 @@ const subirIlustracion = async (req, res = response) => {
         // Agregar el nuevo nombre único al cuerpo de la solicitud
         req.body.nombre = nombre;
 
-        //Si el ilustracion no existe, creamos un nuevo objeto Ilustracion con los datos recibidos en el cuerpo de la petición
+        //Si la ilustracion no existe, creamos un nuevo objeto Ilustracion con los datos recibidos en el cuerpo de la petición
         ilustracion = new Ilustracion(req.body);        
         
         let result="";
