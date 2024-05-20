@@ -25,8 +25,10 @@ const IlustracionSchema = Schema({
     usuario : {
         type : String,
         require: true
-    } //Añadir campo usuario | Subido por:
-    //TODO: Añadir campo boolean de 'me gusta'
+    },
+    likes: [{ 
+        type: String 
+    }],   
 });
 
 const GuardadosSchema = Schema({
@@ -53,8 +55,10 @@ const GuardadosSchema = Schema({
     usuario : {
         type : String,
         require: true
-    }, //Añadir campo usuario | Subido por:
-    //TODO: Añadir campo boolean de 'me gusta'
+    },
+    likes: [{ 
+        type: String 
+    }],
     propietario: {
         type: String,
         required: true

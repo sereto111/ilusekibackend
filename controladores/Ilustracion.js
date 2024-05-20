@@ -33,16 +33,16 @@ const subirIlustracion = async (req, res = response) => {
         req.body.nombre = nombre;
 
         //Si la ilustracion no existe, creamos un nuevo objeto Ilustracion con los datos recibidos en el cuerpo de la petición
-        ilustracion = new Ilustracion(req.body);        
-        
-        let result="";
+        ilustracion = new Ilustracion(req.body);
+
+        let result = "";
         // Verifica si se ha enviado una imagen en la solicitud
         if (req.files?.imagen) {
             //Subir imagen
-            result = await uploadImage(req.files.imagen.tempFilePath);            
+            result = await uploadImage(req.files.imagen.tempFilePath);
 
             await fs.unlink(req.files.imagen.tempFilePath);
-        }        
+        }
 
         //Añado el secure_url de la imagen al campo imagen de la base de datos
         ilustracion.imagen.public_id = result.public_id;
@@ -56,11 +56,11 @@ const subirIlustracion = async (req, res = response) => {
             ok: true,
             mensaje: "subir",
             nombre: ilustracion.nombre,
-            descripcion: ilustracion.descripcion,                        
+            descripcion: ilustracion.descripcion,
             imagen: {
                 public_id: result.public_id,
                 secure_url: result.secure_url
-            },            
+            },
             usuario: ilustracion.usuario
         })
     } catch (error) {
@@ -96,8 +96,8 @@ const buscarIlustracionAEditar = async (req, res = response) => {
             ok: true,
             mensaje: "buscar",
             nombre,
-            descripcion: ilustracion.descripcion,            
-            imagen: ilustracion.imagen,           
+            descripcion: ilustracion.descripcion,
+            imagen: ilustracion.imagen,
             usuario: ilustracion.usuario,
             id: ilustracion.id
         })
@@ -114,38 +114,38 @@ const buscarIlustracionAEditar = async (req, res = response) => {
 const buscarIlustracion = async (req, res = response) => {
     // Obtenemos el nombre del ilustracion a buscar a partir del cuerpo de la solicitud
     const { nombre } = req.body;
-  
+
     try {
-      // Buscamos todos los ilustraciones en la base de datos que tengan un nombre que coincida parcialmente con el nombre especificado
-      const ilustraciones = await Ilustracion.find({ nombre: { $regex: nombre, $options: 'i' } });
-  
-      // Si no se encuentra ningún ilustracion con el nombre especificado, devolvemos una respuesta de error
-      if (ilustraciones.length === 0) {
-        return res.status(400).json({
-          ok: false,
-          mensaje: 'No se encontraron ilustraciones con ese nombre en la BD'
-        });
-      }
-  
-      // Si se encuentran ilustraciones con el nombre especificado, devolvemos una respuesta con los ilustraciones encontrados
-      const resultados = ilustraciones.map((ilustracion) => ({
-        nombre: ilustracion.nombre,
-        descripcion: ilustracion.descripcion,        
-        imagen: ilustracion.imagen,
-        usuario: ilustracion.usuario,
-        id: ilustracion.id
-      }));
-  
-      return res.json(resultados);
+        // Buscamos todos los ilustraciones en la base de datos que tengan un nombre que coincida parcialmente con el nombre especificado
+        const ilustraciones = await Ilustracion.find({ nombre: { $regex: nombre, $options: 'i' } });
+
+        // Si no se encuentra ningún ilustracion con el nombre especificado, devolvemos una respuesta de error
+        if (ilustraciones.length === 0) {
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'No se encontraron ilustraciones con ese nombre en la BD'
+            });
+        }
+
+        // Si se encuentran ilustraciones con el nombre especificado, devolvemos una respuesta con los ilustraciones encontrados
+        const resultados = ilustraciones.map((ilustracion) => ({
+            nombre: ilustracion.nombre,
+            descripcion: ilustracion.descripcion,
+            imagen: ilustracion.imagen,
+            usuario: ilustracion.usuario,
+            id: ilustracion.id
+        }));
+
+        return res.json(resultados);
     } catch (error) {
-      // Si se produce un error durante la búsqueda, devolvemos una respuesta de error
-      return res.status(500).json({
-        ok: false,
-        mensaje: 'Error en el servidor'
-      });
+        // Si se produce un error durante la búsqueda, devolvemos una respuesta de error
+        return res.status(500).json({
+            ok: false,
+            mensaje: 'Error en el servidor'
+        });
     }
-  };
-  
+};
+
 
 //Listar todos las ilustraciones
 const listarIlustraciones = async (req, res = response) => {
@@ -228,6 +228,64 @@ const eliminarIlustracion = async (req, res) => {
     }
 }
 
+//Dar me gusta
+const agregarMeGustaIlustracion = async (req, res) => {
+    const { nombre } = req.params;
+
+    try {
+        const ilustracion = await Ilustracion.findOne({ nombre });
+        if (!ilustracion) return res.status(404).json({ mensaje: 'ilustración no encontrada' });
+
+        // Verificar si el usuario ya ha dado me gusta
+        const user = req.body.usuario;
+        if (!ilustracion.likes.includes(user)) {
+            ilustracion.likes.push(user);
+            await ilustracion.save();
+            return res.status(200).json({ mensaje: 'me gusta añadido' });
+        }
+
+        return res.status(400).json({ mensaje: 'ya has dado me gusta a esta ilustración' });
+    } catch (error) {
+        res.status(500).json({ mensaje: 'Error al dar me gusta' });
+    }
+}
+
+//Quitar me gusta
+const deleteMeGustaIlustracion = async (req, res) => {
+    const { nombre } = req.params;
+
+    try {
+        const ilustracion = await Ilustracion.findOne({ nombre });
+        if (!ilustracion) return res.status(404).json({ mensaje: 'ilustración no encontrada' });
+
+        // Verificar si el usuario ha dado me gusta
+        const user = req.body.usuario;
+        if (ilustracion.likes.includes(user)) {
+            ilustracion.likes = ilustracion.likes.filter(likeUser => likeUser !== user);
+            await ilustracion.save();
+            return res.status(200).json({ mensaje: 'me gusta eliminado' });
+        }
+
+        return res.status(400).json({ mensaje: 'no has dado me gusta a esta ilustración' });
+    } catch (error) {
+        res.status(500).json({ mensaje: 'error al quitar me gusta' });
+    }
+}
+
+//Listar me gusta de un usuario
+const listarMeGustaIlustracion = async (req, res) => {
+    try {
+        const usuario = req.params.usuario;
+        const ilustraciones = await Ilustracion.find({ likes: usuario });
+
+        if (!ilustraciones) return res.status(404).json({ mensaje: 'no se encontraron ilustraciones' });
+
+        return res.status(200).json(ilustraciones);
+    } catch (error) {
+        res.status(500).json({ mensaje: 'error al obtener las ilustraciones' });
+    }
+}
+
 //Añadir a guardados
 const agregarGuardados = async (req, res) => {
     const { nombre } = req.body;
@@ -256,7 +314,7 @@ const agregarGuardados = async (req, res) => {
         const entradaGuardados = new Guardados({
             nombre: ilustracion.nombre,
             descripcion: ilustracion.descripcion,
-            imagen: ilustracion.imagen,           
+            imagen: ilustracion.imagen,
             usuario: ilustracion.usuario,
             propietario: propietario,
         });
@@ -268,7 +326,7 @@ const agregarGuardados = async (req, res) => {
             mensaje: "agregar",
             nombre: ilustracion.nombre,
             descripcion: ilustracion.descripcion,
-            imagen: ilustracion.imagen,            
+            imagen: ilustracion.imagen,
             usuario: ilustracion.usuario
         })
 
@@ -311,7 +369,7 @@ const eliminarGuardados = async (req, res) => {
 
     try {
         //Utilizamos el método deleteOne() de Mongoose para eliminar la ilustración con el nombre especificado
-        const result = await Guardados.deleteOne({ nombre: nombre, propietario:propietario });
+        const result = await Guardados.deleteOne({ nombre: nombre, propietario: propietario });
 
         //Si el resultado indica que no se eliminó ningún registro, devolvemos un error 404
         if (result.deletedCount === 0) {
@@ -329,5 +387,5 @@ const eliminarGuardados = async (req, res) => {
 
 //Exportamos las funciones para que puedan ser utilizadas desde otros módulos
 module.exports = {
-    validarImagen, subirIlustracion, buscarIlustracionAEditar, buscarIlustracion, listarIlustraciones, actualizarIlustracion, eliminarIlustracion, agregarGuardados, listarGuardados, eliminarGuardados
+    validarImagen, subirIlustracion, buscarIlustracionAEditar, buscarIlustracion, listarIlustraciones, actualizarIlustracion, eliminarIlustracion, agregarMeGustaIlustracion, deleteMeGustaIlustracion, listarMeGustaIlustracion, agregarGuardados, listarGuardados, eliminarGuardados
 }
