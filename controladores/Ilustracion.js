@@ -73,43 +73,6 @@ const subirIlustracion = async (req, res = response) => {
 
 }
 
-//TODO:
-//Buscar ilustracion por nombre
-const buscarIlustracionAEditar = async (req, res = response) => {
-    //Obtenemos el nombre de la ilustracion a buscar a partir del cuerpo de la solicitud
-    const { nombre } = req.body
-
-    try {
-        //Buscamos una ilustracion en la base de datos que tenga el título especificado utilizando el método findOne() de Mongoose
-        let ilustracion = await Ilustracion.findOne({ nombre })
-
-        //Si no se encuentra ninguna ilustracion con el título especificado, devolvemos una respuesta de error
-        if (!ilustracion) {
-            return res.status(400).json({
-                ok: false,
-                mensaje: 'la ilustracion no existe en la BD'
-            })
-        }
-
-        //Si se encuentra una ilustracion con el título especificado, devolvemos una respuesta con el ilustracion encontrado
-        return res.json({
-            ok: true,
-            mensaje: "buscar",
-            nombre,
-            descripcion: ilustracion.descripcion,
-            imagen: ilustracion.imagen,
-            usuario: ilustracion.usuario,
-            id: ilustracion.id
-        })
-    } catch {
-        //Si se produce un error durante la búsqueda, devolvemos una respuesta de error
-        return res.status(500).json({
-            ok: false,
-            mensaje: 'error en el servidor'
-        })
-    }
-}
-
 //Buscar ilustracion buscador por nombre
 const buscarIlustracion = async (req, res = response) => {
     // Obtenemos el nombre del ilustracion a buscar a partir del cuerpo de la solicitud
@@ -173,8 +136,8 @@ const listarIlustraciones = async (req, res = response) => {
 const actualizarIlustracion = async (req, res = response) => {
     //Obtenemos el nombre del ilustracion a actualizar desde los parámetros de la solicitud
     const { nombre } = req.params;
-    //Obtenemos la nueva información de la película desde el cuerpo de la solicitud
-    const { nombre: nuevoNombre, descripcion, imagen, usuario } = req.body;
+    //Obtenemos la nueva información de la ilustracion desde el cuerpo de la solicitud
+    const { descripcion } = req.body;
 
     try {
         //Utilizamos el método updateOne() de Mongoose para actualizar el ilustracion en la base de datos
@@ -182,7 +145,7 @@ const actualizarIlustracion = async (req, res = response) => {
             //Especificamos el criterio de búsqueda
             { nombre: nombre },
             //Especificamos los campos que queremos actualizar utilizando el operador $set de MongoDB
-            { $set: { nombre: nuevoNombre, descripcion, imagen, usuario } }
+            { $set: { descripcion } }
         );
 
         //Si el número de documentos modificados es 0, significa que la película no existe en la base de datos
@@ -387,5 +350,5 @@ const eliminarGuardados = async (req, res) => {
 
 //Exportamos las funciones para que puedan ser utilizadas desde otros módulos
 module.exports = {
-    validarImagen, subirIlustracion, buscarIlustracionAEditar, buscarIlustracion, listarIlustraciones, actualizarIlustracion, eliminarIlustracion, agregarMeGustaIlustracion, deleteMeGustaIlustracion, listarMeGustaIlustracion, agregarGuardados, listarGuardados, eliminarGuardados
+    validarImagen, subirIlustracion, buscarIlustracion, listarIlustraciones, actualizarIlustracion, eliminarIlustracion, agregarMeGustaIlustracion, deleteMeGustaIlustracion, listarMeGustaIlustracion, agregarGuardados, listarGuardados, eliminarGuardados
 }

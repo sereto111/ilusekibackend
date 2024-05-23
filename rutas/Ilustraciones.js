@@ -26,8 +26,7 @@ router.get("/listarIlustraciones",
 
 //Actualizar por nombre
 router.put("/actualizarIlustracion/:nombre",
-    [        
-        check('imagen', 'la imagen no puede estar vacía').notEmpty(),
+    [                
         validarCampos
     ],
     actualizarIlustracion
