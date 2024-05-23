@@ -11,8 +11,7 @@ router.get("/", (req, res) => {
 
 //Crear Ilustracion
 router.post("/subirIlustracion",
-    [
-        check('descripcion', 'la descripcion no puede estar vacía').notEmpty(),
+    [        
         check('imagen').custom(validarImagen),
         validarCampos
     ],
@@ -27,8 +26,7 @@ router.get("/listarIlustraciones",
 
 //Actualizar por nombre
 router.put("/actualizarIlustracion/:nombre",
-    [
-        check('descripcion', 'la descripcion no puede estar vacía').notEmpty(),
+    [        
         check('imagen', 'la imagen no puede estar vacía').notEmpty(),
         validarCampos
     ],

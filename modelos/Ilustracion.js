@@ -9,8 +9,7 @@ const IlustracionSchema = Schema({
         unique: true
     },
     descripcion : {
-        type : String,
-        require: true
+        type : String
     },
     imagen : {        
         public_id: {
