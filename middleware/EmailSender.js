@@ -46,6 +46,29 @@ class EmailSender {
       throw new Error('Error al enviar el correo electrónico');
     }
   }
+
+  async sendContactEmail(name, email, message) {
+    try {
+      // Enviar el correo electrónico del formulario de contacto
+      await this.transporter.sendMail({
+        from: email,
+        to: 'iluseki.help@gmail.com',
+        subject: `Mensaje de contacto de ${name}`,
+        html: `
+          <p>Has recibido un nuevo mensaje de contacto:</p>
+          <p><strong>Nombre:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Mensaje:</strong></p>
+          <p>${message}</p>
+        `,
+      });
+
+      console.log('Correo de contacto enviado con éxito');
+    } catch (error) {
+      console.error('Error al enviar el correo de contacto:', error);
+      throw new Error('Error al enviar el correo de contacto');
+    }
+  }
 }
 
 module.exports = EmailSender;
