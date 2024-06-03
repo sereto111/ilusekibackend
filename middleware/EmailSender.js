@@ -63,7 +63,6 @@ class EmailSender {
         `,
       });
 
-      console.log('Correo de contacto enviado con éxito');
     } catch (error) {
       console.error('Error al enviar el correo de contacto:', error);
       throw new Error('Error al enviar el correo de contacto');
