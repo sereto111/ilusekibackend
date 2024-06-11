@@ -6,6 +6,7 @@ const auth = require('./rutas/auth');
 const ilustracion = require('./rutas/Ilustraciones');
 const EmailSender = require('./rutas/EmailSender');
 const ResetPass = require('./rutas/ResetPass');
+const Time = require('./rutas/CompareTime');
 const { conexion } = require('./database/config');
 
 //conexion a la BD
@@ -31,6 +32,7 @@ app.use('/api/user', auth);
 app.use('/api/ilustration', ilustracion);
 app.use('/api/correo', EmailSender);
 app.use('/api/pass', ResetPass);
+app.use('/api/time', Time);
 
 const PORT = process.env.PORT || 5000
 
