@@ -6,13 +6,18 @@ router.post('/compare-time', (req, res) => {
         const clientTime = new Date(req.body.clientTime);
         const serverTime = new Date();
 
-        //Permite una diferencia de 1 minuto
-        const isSameTime = Math.abs(serverTime - clientTime) < 60000;
+        // Comparar solo la fecha y la hora sin los segundos
+        const isSameTime = (
+            clientTime.getFullYear() === serverTime.getFullYear() &&
+            clientTime.getMonth() === serverTime.getMonth() &&
+            clientTime.getDate() === serverTime.getDate() &&
+            clientTime.getHours() === serverTime.getHours() &&
+            clientTime.getMinutes() === serverTime.getMinutes()
+        );
 
         res.json({
             serverTime: serverTime.toISOString(),
-            clientTime: clientTime.toISOString(),
-            isSameTime,
+            isSameTime
         });
     } catch (error) {
         res.status(400).json({ error: error.message });
