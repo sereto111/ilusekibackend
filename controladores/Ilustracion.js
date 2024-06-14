@@ -19,7 +19,6 @@ const subirIlustracion = async (req, res = response) => {
     const { nombre } = req.body
 
     try {
-        //TODO buscar y quitar console.log
         // Verificar si ya existe una ilustración con el mismo nombre
         let ilustracion = await Ilustracion.findOne({ nombre });
 
