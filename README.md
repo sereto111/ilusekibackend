@@ -1,0 +1,55 @@
+Link Backend desplegado (al que se hacen las peticiones):
+[https://ilusekibackend.onrender.com](https://ilusekibackend.onrender.com)
+
+Link Backend GitHub:
+[https://github.com/sereto111/ilusekibackend/tree/main](https://github.com/sereto111/ilusekibackend/tree/main)
+    
+En el package.json se pueden ver las dependecias:\
+"bcryptjs": "^2.4.3",\
+"cloudinary": "^2.1.0",\
+"cors": "^2.8.5",\
+"dotenv": "^16.0.3",\
+"express": "^4.19.2",\
+"express-fileupload": "^1.5.0",\
+"express-validator": "^6.15.0",\
+"fs-extra": "^11.2.0",\
+"jsonwebtoken": "^9.0.0",\
+"mongoose": "^8.2.4",\
+"nodemailer": "^6.9.13",\
+"nodemon": "^2.0.21",\
+"uuid": "^9.0.1"
+
+Para instalarlas habría que ejecutar el comando:
+### `npm install`
+
+---
+
+Link Frontend desplegado (puede tardar en cargar las imágenes, ya que el servidor del Backend,\
+al estar desplegado de manera gratuita, se apaga al llevar un rato sin tener peticiones, tardará unos minutos en encender):
+[https://iluseki.netlify.app](https://iluseki.netlify.app)
+
+Link Frontend GitHub
+[https://github.com/sereto111/ilusekifrontend/tree/main](https://github.com/sereto111/ilusekifrontend/tree/main)
+
+En el package.json se pueden ver las dependecias:\
+"@emotion/react": "^11.11.4",\
+"@emotion/styled": "^11.11.5",\
+"@mui/icons-material": "^5.15.15",\
+"@mui/material": "^5.15.15",\
+"@splinetool/react-spline": "^2.2.6",\
+"@testing-library/jest-dom": "^5.17.0",\
+"@testing-library/react": "^13.4.0",\
+"@testing-library/user-event": "^13.5.0",\
+"axios": "^1.6.8",\
+"crypto-js": "^4.2.0",\
+"js-cookie": "^3.0.5",\
+"react": "^18.2.0",\
+"react-cookie-consent": "^9.0.0",\
+"react-dom": "^18.2.0",\
+"react-router-dom": "^6.22.3",\
+"react-scripts": "5.0.1",\
+"react-webcam": "^7.2.0",\
+"web-vitals": "^2.1.4"
+
+Para instalarlas habría que ejecutar el comando:
+### `npm install`
